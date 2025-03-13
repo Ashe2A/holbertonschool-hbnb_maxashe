@@ -11,7 +11,7 @@ class HBnBFacade:
         self.place_repo = InMemoryRepository()
         self.review_repo = InMemoryRepository()
 
-    # USER
+    #  USER
     def create_user(self, user_data):
         user = User(**user_data)
         self.user_repo.add(user)
@@ -29,7 +29,7 @@ class HBnBFacade:
     def update_user(self, user_id, user_data):
         self.user_repo.update(user_id, user_data)
     
-    # AMENITY
+    #  AMENITY
     def create_amenity(self, amenity_data):
         amenity = Amenity(**amenity_data)
         self.amenity_repo.add(amenity)
@@ -44,7 +44,7 @@ class HBnBFacade:
     def update_amenity(self, amenity_id, amenity_data):
         self.amenity_repo.update(amenity_id, amenity_data)
 
-    # PLACE
+    #  PLACE
     def create_place(self, place_data):
         user = self.user_repo.get_by_attribute('id', place_data['owner_id'])
         if not user:
@@ -74,7 +74,7 @@ class HBnBFacade:
     def update_place(self, place_id, place_data):
         self.place_repo.update(place_id, place_data)
 
-    # REVIEWS
+    #  REVIEWS
     def create_review(self, review_data):
         user = self.user_repo.get(review_data['user_id'])
         if not user:

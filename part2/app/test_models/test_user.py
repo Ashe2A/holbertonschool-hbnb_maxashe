@@ -11,7 +11,7 @@ class TestUser(unittest.TestCase):
         user_id = user.id
         assert user.to_dict() == {'id': user_id, 'first_name': "John", 'last_name': "Doe", 'email': 'john.doe@example.com'}
 
-    # Faire les tests pour les types + is admin
+    #  Faire les tests pour les types + is admin
 
     def test_user_max_length(self):
         with self.assertRaises(ValueError) as context:

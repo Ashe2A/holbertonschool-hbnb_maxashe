@@ -7,32 +7,48 @@ from flask import request
 api = Namespace('admin', description='Admin operations')
 
 user_model = api.model('User', {
-    'first_name': fields.String(required=True, description='First name of the user'),
-    'last_name': fields.String(required=True, description='Last name of the user'),
-    'email': fields.String(required=True, description='Email of the user'),
-    'password': fields.String(required=True, description='Password of the user')
+    'first_name': fields.String(required=True,
+                                description='First name of the user'),
+    'last_name': fields.String(required=True,
+                               description='Last name of the user'),
+    'email': fields.String(required=True,
+                           description='Email of the user'),
+    'password': fields.String(required=True,
+                              description='Password of the user')
 })
 
 amenity_model = api.model('Amenity', {
-    'name': fields.String(required=True, description='Name of the amenity')
+    'name': fields.String(required=True,
+                          description='Name of the amenity')
 })
 
 place_model = api.model('Place', {
-    'title': fields.String(required=True, description='Title of the place'),
+    'title': fields.String(required=True,
+                           description='Title of the place'),
     'description': fields.String(description='Description of the place'),
-    'price': fields.Float(required=True, description='Price per night'),
-    'latitude': fields.Float(required=True, description='Latitude of the place'),
-    'longitude': fields.Float(required=True, description='Longitude of the place'),
+    'price': fields.Float(required=True,
+                          description='Price per night'),
+    'latitude': fields.Float(required=True,
+                             description='Latitude of the place'),
+    'longitude': fields.Float(required=True,
+                              description='Longitude of the place'),
     'owner_id': fields.String(description='ID of the owner'),
-    'owner': fields.Nested(user_model, description='Owner details'),
-    'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
+    'owner': fields.Nested(user_model,
+                           description='Owner details'),
+    'amenities': fields.List(fields.String,
+                             required=True,
+                             description="List of amenities ID's")
 })
 
 review_model = api.model('Review', {
-    'text': fields.String(required=True, description='Text of the review'),
-    'rating': fields.Integer(required=True, description='Rating of the place (1-5)'),
-    'user_id': fields.String(required=True, description='ID of the user'),
-    'place_id': fields.String(required=True, description='ID of the place')
+    'text': fields.String(required=True,
+                          description='Text of the review'),
+    'rating': fields.Integer(required=True,
+                             description='Rating of the place (1-5)'),
+    'user_id': fields.String(required=True,
+                             description='ID of the user'),
+    'place_id': fields.String(required=True,
+                              description='ID of the place')
 })
 
 
@@ -52,22 +68,28 @@ class AdminUserCreate(Resource):
         user_data = request.json
         email = user_data.get('email')
         password = user_data.get('password')
-        
+
         if not email or not password:
             return {'error': 'Email and password are required'}, 400
 
-        # Check if email is already in use
+        #  Check if email is already in use
         if facade.get_user_by_email(email):
             return {'error': 'Email already registered'}, 400
 
-        # Logic to create a new user
+        #  Logic to create a new user
         try:
-            new_user = facade.create_user(email=email, password=password, is_admin=user_data.get('is_admin', False))
-            return {'message': 'User created successfully', 'user_id': new_user.id}, 201
+            new_user = facade.create_user(email=email,
+                                          password=password,
+                                          is_admin=user_data.get('is_admin',
+                                                                 False))
+            return {
+                'message': 'User created successfully',
+                'user_id': new_user.id
+                }, 201
         except Exception as e:
             return {'error': str(e)}, 400
-    
-    
+
+
 @api.route('/users/<user_id>')
 class AdminUserModify(Resource):
     @api.expect(user_model)
@@ -79,39 +101,38 @@ class AdminUserModify(Resource):
     @jwt_required()
     def put(self, user_id):
         current_user = get_jwt_identity()
-        
-        # If 'is_admin' is part of the identity payload
+
+        #  If 'is_admin' is part of the identity payload
         if not current_user.get('is_admin'):
             return {'error': 'Admin privileges required'}, 403
 
         data = request.json
         email = data.get('email')
         password = data.get('password')
-        
         user = facade.get_user(user_id)
         if not user:
             return {'error': 'User not found'}, 404
 
         if email:
-            # Check if email is already in use
+            #  Check if email is already in use
             existing_user = facade.get_user_by_email(email)
             if existing_user and existing_user.id != user_id:
                 return {'error': 'Email is already in use'}, 400
             user.email = email
 
-        # Logic to update user details, including email and password
+        #  Logic to update user details, including email and password
         hash_password = generate_password_hash(user['password'])
 
         if password:
             user.password = hash_password(password)
-		# Save the modification
+        # Save the modification
         try:
             facade.update_user(user, data)
             return {'message': 'User updated successfully'}, 200
         except Exception as e:
             return {'error': str(e)}, 400
-    
-    
+
+
 @api.route('/amenities/')
 class AdminAmenityCreate(Resource):
     @api.expect(amenity_model)
@@ -128,14 +149,17 @@ class AdminAmenityCreate(Resource):
         if not name:
             return {'error': 'Amenity name is required'}, 400
 
-        # Logic to create a new amenity
+        #  Logic to create a new amenity
         try:
             new_amenity = facade.create_amenity(name=name)
-            return {'message': 'Amenity created successfully', 'amenity_id': new_amenity.id}, 201
+            return {
+                'message': 'Amenity created successfully',
+                'amenity_id': new_amenity.id
+                }, 201
         except Exception as e:
             return {'error': str(e)}, 400
-    
-    
+
+
 @api.route('/amenities/<amenity_id>')
 class AdminAmenityModify(Resource):
     @api.response(200, 'Amenity updated successfully')
@@ -149,11 +173,11 @@ class AdminAmenityModify(Resource):
             return {'error': 'Admin privileges required'}, 403
         data = request.json
         name = data.get('name')
-        # Logic to update an amenity
+        #  Logic to update an amenity
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
             return {'error': 'Amenity not found'}, 404
-        
+
         if name:
             amenity.name = name
 
@@ -175,20 +199,20 @@ class AdminPlaceModify(Resource):
     def put(self, place_id):
         current_user = get_jwt_identity()
 
-        # Set is_admin default to False if not exists
+        #  Set is_admin default to False if not exists
         is_admin = current_user.get('is_admin', False)
 
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
 
-        if not is_admin :
+        if not is_admin:
             return {'error': 'Unauthorized action'}, 403
 
         data = request.json
         name = data.get('name')
         description = data.get('description')
-        # Logic to update the place
+        #  Logic to update the place
         if name:
             place.name = name  # C'est quoi name? le nom de la place???
         if description:

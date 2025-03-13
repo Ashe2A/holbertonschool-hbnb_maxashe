@@ -11,7 +11,7 @@ bcrypt = Bcrypt()
 def create_invalid_token():
     identity = {"sub": "fake_user_uuid", "is_admin": False}
 
-    # Générer un token valide avec une clé incorrecte
+    #  Générer un token valide avec une clé incorrecte
     fake_token = jwt.encode(identity, "default_secret_key", algorithm="HS256")
 
     return fake_token

@@ -4,7 +4,7 @@ import unittest
 import requests
 
 print("---------------- 👀 Checking task 0 ---------------- \n")
-# Define the expected directory structure
+  #Define the expected directory structure
 required_dirs = [
     "app",
     "app/api",
@@ -14,7 +14,7 @@ required_dirs = [
     "app/persistence"
 ]
 
-# Check if all required directories and init files exist
+  #Check if all required directories and init files exist
 missing_dirs = [d for d in required_dirs if not os.path.isdir(d)]
 missing_init_files = [d for d in required_dirs if not os.path.isfile(os.path.join(d, "__init__.py"))]
 
@@ -110,7 +110,7 @@ from app.models.place import Place
 from app.models.review import Review
 from datetime import datetime
 
-# Check 0 - check if BaseModel has all expected attributes
+  #Check 0 - check if BaseModel has all expected attributes
 print("👀 Checking check 0:\n")
 basemodel = BaseModel()
 attributes = {'id': str, 'created_at': datetime, 'updated_at': datetime}
@@ -131,7 +131,7 @@ else:
 	print("✅ All classes inherits from BaseModel.")
 print()
 
-# Check 1 - check if User has all expected attributes
+  #Check 1 - check if User has all expected attributes
 print("👀 Checking check 1:\n")
 try:
 	user = User('John', 'Doe', 'john.doe@example.com')
@@ -197,7 +197,7 @@ except:
 	print("✅ User is checking email type.")
 print()
 
-# Check 2 - check if Place has all expected attributes
+  #Check 2 - check if Place has all expected attributes
 print("👀 Checking check 2:\n")
 
 try:
@@ -284,7 +284,7 @@ except:
 
 print()
 
-# Check 3 - check if Review has all expected attributes
+  #Check 3 - check if Review has all expected attributes
 
 print("👀 Checking check 3:\n")
 try:
@@ -352,7 +352,7 @@ except:
 	print("✅ Review is validating user type and if empty.")
 print()
 
-# Check 4 - check if Amenity has all expected attributes
+  #Check 4 - check if Amenity has all expected attributes
 
 print("👀 Checking check 4:\n")
 try:
@@ -396,7 +396,7 @@ else:
 		print("✅ add_amenity is adding the amenity to the place.")
 print()
 
-# Check 5 - check if classes have all exepected common methods and attributes
+  #Check 5 - check if classes have all exepected common methods and attributes
 
 print("👀 Checking check 5:\n")
 common_methods = ['save', 'update']
@@ -435,7 +435,7 @@ else:
 	print("✅ update is updating the updated_at attribute.")
 print()
 
-# Check 6 - check if all classes have a id using a valid UUID
+  #Check 6 - check if all classes have a id using a valid UUID
 
 print("👀 Checking check 6:\n")
 for object in objects:
@@ -449,7 +449,7 @@ for object in objects:
 		print(f"❌ {object.__class__.__name__} id is not a valid UUID.")
 print()
 
-# Check 7 - check if simple tests have been implemented
+  #Check 7 - check if simple tests have been implemented
 print("👀 Checking check 7:\n")
 print("🫵 Check yourself if simple tests have been implemented\n")
 
@@ -690,7 +690,7 @@ class TestAPI(unittest.TestCase):
 		print("\n---------------- 👀 Checking task 4 ----------------\n")
 
 	def test_19_create_place(self):
-		# Delete amenities if the student didn't implement it in the POST method (task not clear about it)
+		  #Delete amenities if the student didn't implement it in the POST method (task not clear about it)
 		place_data = {'title': 'My Place', 'price': 10.10, 'latitude': 86.02, 'longitude': 153.12, 'owner_id': TestAPI.user['id'], 'description': 'A nice place', 'amenities': self.amenities}
 		response = requests.post(self.url + 'places/', json=place_data, headers=self.headers)
 
@@ -731,7 +731,7 @@ class TestAPI(unittest.TestCase):
 
 		try:
 			self.assertIn(response.status_code, [400, 404])
-			# Delete the following 3 lines if the student didn't implement amenities in the POST method (task not clear about it)
+			  #Delete the following 3 lines if the student didn't implement amenities in the POST method (task not clear about it)
 			place_data = {'title': 'My Place', 'price': 10.10, 'latitude': 86.02, 'longitude': 153.12, 'owner_id': TestAPI.user['id'], 'description': 'A nice place', 'amenities': [{'id': 'test', 'name': 'WiFi'}]}
 			response = requests.post(self.url + 'places/', json=place_data, headers=self.headers)
 			self.assertIn(response.status_code, [400, 404])
