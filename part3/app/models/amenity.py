@@ -10,7 +10,7 @@ class Amenity(BaseModel):
     id = db.Column(db.String(36), primary_key=True,
                    default=lambda: str(uuid.uuid4()))
     name = db.Column(db.String(50), nullable=False)
-    places = relationship("AmenityPlace", backref="amenity", lazy=True)
+    amenity_place = relationship("AmenityPlace", backref="amenity", lazy=True)
 
     @property
     def name(self):
@@ -35,7 +35,7 @@ class Amenity(BaseModel):
         }
 
 
-student_course = db.Table("amenity_place",
+amenity_place = db.Table("amenity_place",
                           db.Column("amenity_id",
                                     db.String,
                                     db.ForeignKey("amenities.id"),

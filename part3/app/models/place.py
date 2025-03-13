@@ -17,7 +17,7 @@ class Place(BaseModel):
     longitude = db.Column(db.Float, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     reviews = relationship("Review", backref="place", lazy=True)
-    amenities = relationship("AmenityPlace", backref="place", lazy=True)
+    amenity_place = relationship("AmenityPlace", backref="place", lazy=True)
 
     @property
     def title(self):
