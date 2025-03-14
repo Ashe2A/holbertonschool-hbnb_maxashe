@@ -1,18 +1,35 @@
 from .basemodel import BaseModel
-from app import db
+from app.extensions import db
 from sqlalchemy.orm import relationship
 import uuid
+
+
+amenity_place = db.Table("amenity_place",
+                         db.Column("amenity_id",
+                                   db.String,
+                                   db.ForeignKey("amenities.id",
+                                                 ondelete="CASCADE"),
+                                   nullable=False, primary_key=True),
+                         db.Column("place_id",
+                                   db.String,
+                                   db.ForeignKey("places.id",
+                                                 ondelete="CASCADE"),
+                                   nullable=False, primary_key=True)
+                         )
 
 
 class Amenity(BaseModel):
     __tablename__ = "amenities"
 
-    id = db.Column(db.String(36), primary_key=True,
+    __id = db.Column(db.String(36), primary_key=True,
                    default=lambda: str(uuid.uuid4()))
     name = db.Column(db.String(50), nullable=False)
-    amenity_place = relationship("AmenityPlace", backref="amenity", lazy=True)
+    places = relationship("Place",
+                          secondary=amenity_place,
+                          backref="Is featured in",
+                          lazy=True)
 
-    @property
+    """@property
     def name(self):
         return self.__name
 
@@ -23,25 +40,13 @@ class Amenity(BaseModel):
         if not value:
             raise ValueError("Name cannot be empty")
         super().is_max_length('Name', value, 50)
-        self.__name = value
+        self.__name = value"""
 
     def update(self, data):
         return super().update(data)
 
     def to_dict(self):
         return {
-            'id': self.id,
+            'id': self.__id,
             'name': self.name
         }
-
-
-amenity_place = db.Table("amenity_place",
-                          db.Column("amenity_id",
-                                    db.String,
-                                    db.ForeignKey("amenities.id"),
-                                    nullable=False, primary_key=True),
-                          db.Column("place_id",
-                                    db.String,
-                                    db.ForeignKey("places.id"),
-                                    nullable=False, primary_key=True)
-                          )

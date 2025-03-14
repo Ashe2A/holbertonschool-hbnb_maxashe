@@ -8,17 +8,17 @@ import uuid
 class User(BaseModel):
     __tablename__ = 'users'
 
-    id = db.Column(db.String(36), primary_key=True,
+    __id = db.Column(db.String(36), primary_key=True,
                    default=lambda: str(uuid.uuid4()))
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(120), nullable=False, unique=True)
-    password = db.Column(db.String(128), nullable=False)
-    is_admin = db.Column(db.Boolean, default=False)
-    places = relationship("Place", backref="owner", lazy=True)
-    reviews = relationship("Review", backref="user", lazy=True)
+    __email = db.Column(db.String(120), nullable=False, unique=True)
+    __password = db.Column(db.String(128), nullable=False)
+    __is_admin = db.Column(db.Boolean, default=False)
+    places = relationship("Place", backref="Owns", lazy=True)
+    reviews = relationship("Review", backref="Reviews", lazy=True)
 
-    @property
+    """@property
     def first_name(self):
         return self.__first_name
 
@@ -65,7 +65,7 @@ class User(BaseModel):
     def is_admin(self, value):
         if not isinstance(value, bool):
             raise TypeError("Is Admin must be a boolean")
-        self.__is_admin = value
+        self.__is_admin = value"""
 
     def hash_password(self, password):
         """
@@ -130,8 +130,8 @@ class User(BaseModel):
 
     def to_dict(self):
         return {
-            'id': self.id,
+            'id': self.__id,
             'first_name': self.first_name,
             'last_name': self.last_name,
-            'email': self.email
+            'email': self.__email
         }

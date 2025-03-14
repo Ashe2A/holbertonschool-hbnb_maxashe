@@ -2,24 +2,29 @@ from .basemodel import BaseModel
 from .user import User
 from app import db
 import uuid
+from .amenity import amenity_place
 from sqlalchemy.orm import relationship
 
 
 class Place(BaseModel):
     __tablename__ = "places"
 
-    id = db.Column(db.String(36), primary_key=True,
+    __id = db.Column(db.String(36), primary_key=True,
                    default=lambda: str(uuid.uuid4()))
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String)
     price = db.Column(db.Float, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    __owner_id = db.Column(db.String(36),
+                         db.ForeignKey("users.id", ondelete="CASCADE"),
+                         nullable=False)
     reviews = relationship("Review", backref="place", lazy=True)
-    amenity_place = relationship("AmenityPlace", backref="place", lazy=True)
+    amenities = relationship("Amenity",
+                             secondary=amenity_place,
+                             backref="amenity_places", lazy=True)
 
-    @property
+    """@property
     def title(self):
         return self.__title
 
@@ -74,7 +79,7 @@ class Place(BaseModel):
     def owner(self, value):
         if not isinstance(value, User):
             raise TypeError("Owner must be a user instance")
-        self.__owner = value
+        self.__owner = value"""
 
     def add_review(self, review):
         """Add a review to the place."""
@@ -90,24 +95,24 @@ class Place(BaseModel):
 
     def to_dict(self):
         return {
-            'id': self.id,
+            'id': self.__id,
             'title': self.title,
             'description': self.description,
             'price': self.price,
             'latitude': self.latitude,
             'longitude': self.longitude,
-            'owner_id': self.owner.id
+            'owner_id': self.__owner_id
         }
 
     def to_dict_list(self):
         return {
-            'id': self.id,
+            'id': self.__id,
             'title': self.title,
             'description': self.description,
             'price': self.price,
             'latitude': self.latitude,
             'longitude': self.longitude,
-            'owner': self.owner.to_dict(),
+            'owner_id': self.__owner_id,
             'amenities': self.amenities,
             'reviews': self.reviews
         }

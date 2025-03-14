@@ -1,4 +1,3 @@
-from app.persistence.repository import SQLAlchemyRepository
 from app.services.repositories import UserRepository, AmenityRepository, \
     PlaceRepository, ReviewRepository
 from app.models.user import User

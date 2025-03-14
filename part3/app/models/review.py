@@ -1,6 +1,4 @@
 from .basemodel import BaseModel
-from .place import Place
-from .user import User
 from app import db
 import uuid
 
@@ -8,13 +6,18 @@ import uuid
 class Review(BaseModel):
     __tablename__ = 'reviews'
 
-    id = db.Column(db.String(36), primary_key=True,
+    __id = db.Column(db.String(36), primary_key=True,
                    default=lambda: str(uuid.uuid4()))
     text = db.Column(db.String(512), nullable=False)
     rating = db.Column(db.Integer, nullable=False)
-    user_id = db.Column(db.String, db.ForeignKey("users.id"), nullable=False)
+    __user_id = db.Column(db.String(36),
+                        db.ForeignKey("users.id", ondelete="CASCADE"),
+                        nullable=False)
+    __place_id = db.Column(db.String(36),
+                         db.ForeignKey("places.id", ondelete="CASCADE"),
+                         nullable=False)
 
-    @property
+    """@property
     def text(self):
         return self.__text
 
@@ -55,13 +58,13 @@ class Review(BaseModel):
     def user(self, value):
         if not isinstance(value, User):
             raise TypeError("User must be a user instance")
-        self.__user = value
+        self.__user = value"""
 
     def to_dict(self):
         return {
-            'id': self.id,
+            'id': self.__id,
             'text': self.text,
             'rating': self.rating,
-            'place_id': self.place.id,
-            'user_id': self.user.id
+            'place_id': self.__place_id,
+            'user_id': self.__user_id
             }

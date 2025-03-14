@@ -8,4 +8,4 @@ class PlaceRepository(SQLAlchemyRepository):
 
     def get_places_by_user(self, user_id):
         """Retrieve all places owned by a specific user."""
-        return self.model.query.filter_by(user_id=user_id).all()
+        return self.model.query.filter_by(__user_id=user_id).all()
