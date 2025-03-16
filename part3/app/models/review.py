@@ -1,25 +1,24 @@
 from .basemodel import BaseModel
+from .user import User
+from .place import Place
 from app import db
-import uuid
 
 
 class Review(BaseModel):
     __tablename__ = 'reviews'
 
-    __id = db.Column(db.String(36), primary_key=True,
-                   default=lambda: str(uuid.uuid4()))
-    text = db.Column(db.String(512), nullable=False)
-    rating = db.Column(db.Integer, nullable=False)
-    __user_id = db.Column(db.String(36),
+    _text = db.Column("text", db.String(512), nullable=False)
+    _rating = db.Column("rating", db.Integer, nullable=False)
+    _user_id = db.Column(db.String(36),
                         db.ForeignKey("users.id", ondelete="CASCADE"),
                         nullable=False)
-    __place_id = db.Column(db.String(36),
+    _place_id = db.Column(db.String(36),
                          db.ForeignKey("places.id", ondelete="CASCADE"),
                          nullable=False)
 
-    """@property
+    @property
     def text(self):
-        return self.__text
+        return self._text
 
     @text.setter
     def text(self, value):
@@ -27,28 +26,28 @@ class Review(BaseModel):
             raise ValueError("Text cannot be empty")
         if not isinstance(value, str):
             raise TypeError("Text must be a string")
-        self.__text = value
+        self._text = value
 
     @property
     def rating(self):
-        return self.__rating
+        return self._rating
 
     @rating.setter
     def rating(self, value):
         if not isinstance(value, int):
             raise TypeError("Rating must be an integer")
         super().is_between('Rating', value, 1, 6)
-        self.__rating = value
+        self._rating = value
 
     @property
     def place(self):
-        return self.__place
+        return self._place
 
     @place.setter
     def place(self, value):
         if not isinstance(value, Place):
             raise TypeError("Place must be a place instance")
-        self.__place = value
+        self._place = value
 
     @property
     def user(self):
@@ -58,13 +57,13 @@ class Review(BaseModel):
     def user(self, value):
         if not isinstance(value, User):
             raise TypeError("User must be a user instance")
-        self.__user = value"""
+        self.__user = value
 
     def to_dict(self):
         return {
-            'id': self.__id,
+            'id': self.id,
             'text': self.text,
             'rating': self.rating,
-            'place_id': self.__place_id,
-            'user_id': self.__user_id
+            'place_id': self.place.id,
+            'user_id': self.user.id
             }
